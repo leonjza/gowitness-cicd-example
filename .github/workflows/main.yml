@@ -1,0 +1,30 @@
+name: Install and run gowitness
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set Up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.23'
+
+      - name: Install Go Program
+        run: go install github.com/sensepost/gowitness@latest
+
+      # Step 5: Add Go bin directory to PATH
+      - name: Add Go Bin to PATH
+        run: echo "$HOME/go/bin" >> $GITHUB_PATH
+
+      # Step 6: Run the installed Go program
+      - name: Run gowitness
+        run: gowitness scan single -u https://sensepost.com --write-jsonl --write-stdout
+
+      - name: Output results
+        run: cat gowitness.jsonl
